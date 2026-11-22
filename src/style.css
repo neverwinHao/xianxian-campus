@@ -1470,7 +1470,37 @@ body:not(.focused) .bottom-left {
   }
 }
 
-/* A shared page-view count, kept below the camera and walking controls. */
+/* Project link and page-view count sit below the camera and walking controls. */
+.repo-link {
+  position: absolute;
+  left: 27px;
+  bottom: 7px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: #fffff59c;
+  color: #6b7661;
+  font-size: 11px;
+  line-height: 18px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.repo-link svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+.repo-link:hover {
+  background: #fffff5;
+  color: #743c36;
+}
+.repo-link:focus-visible {
+  outline: 2px solid #743c36;
+  outline-offset: 3px;
+}
 .visit-counter {
   position: absolute;
   right: 25px;
@@ -1501,6 +1531,10 @@ body:not(.focused) .bottom-left {
   color: #4c5d42;
 }
 @media (max-width: 760px) {
+  .repo-link {
+    left: 16px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+  }
   .visit-counter {
     right: 16px;
     bottom: max(10px, env(safe-area-inset-bottom));
