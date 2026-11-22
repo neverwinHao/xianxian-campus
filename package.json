@@ -1,0 +1,15 @@
+{
+  "name": "xianxian-campus",
+  "version": "1.0.0",
+  "private": true,
+  "description": "献县第一中学南北校区：使用 JavaScript 和 Three.js 程序化建模的三维校园",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node tools/serve.cjs",
+    "check": "node tools/check.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "build": "node tools/build.cjs"
+  }
+}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+  <meta charset="utf-8" /><title>校园展示成片</title>
+  <style>
+    body {
+      margin: 0;
+      background: #242823;
+      color: #f4f3ec;
+      font: 14px system-ui;
+    }
+    header {
+      padding: 12px 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    button,
+    a,
+    select {
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 5px;
+      background: #f1f0e6;
+      color: #35412e;
+      font: inherit;
+    }
+    a[hidden] {
+      display: none;
+    }
+    #preview {
+      display: block;
+      width: min(100vw, 160vh);
+      height: auto;
+      margin: auto;
+    }
+    #host {
+      position: fixed;
+      left: -2200px;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #walk-joystick,
+    #walk-fast,
+    #error {
+      display: none;
+    }
+    #status {
+      margin-left: auto;
+    }
+  </style>
+  <header>
+    <select id="shot" aria-label="预览镜头"></select
+    ><button id="preview-shot">预览镜头</button
+    ><button id="record">录制完整视频</button
+    ><a id="download" hidden>保存视频</a><span id="status">准备中</span>
+  </header>
+  <canvas id="preview" width="1920" height="1080"></canvas>
+  <div id="host"></div>
+  <div id="walk-joystick"><span id="walk-knob"></span></div>
+  <button id="walk-fast"></button>
+  <div id="error"><span id="error-detail"></span></div>
+  <script src="../vendor/three/three.min.js"></script>
+  <script src="../vendor/three/OrbitControls.js"></script>
+  <script src="../src/campuses.js"></script>
+  <script src="../src/walk.js"></script>
+  <script src="../src/scene.js"></script>
+  <script src="record-showcase.js"></script>
+</html>
