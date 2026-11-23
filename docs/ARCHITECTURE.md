@@ -44,7 +44,7 @@ Three.js → OrbitControls → campuses.js → walk.js → scene.js → app.js �
 
 ## 访问计数
 
-`visits.js` 仅在 `neverwinhao.github.io/xxyz/` 启用不蒜子 `page_pv`。南北校区只是 URL hash 不同，因此使用同一页面计数。计数从接入时开始累计，不代表接入前的访问量。
+`visits.js` 仅在 `neverwinhao.github.io/xxyz/` 启用不蒜子，显示整站访问量 `site_pv`。不蒜子按请求的 Referer 区分页面，而 iOS 上的所有浏览器和 Safari 会把跨站 Referer 截成域名，若用 `page_pv`，苹果设备与其他设备会落在两个计数上。`site_pv` 只按域名累计，所有设备合并为一个总数；该域名下目前只有本页接入不蒜子，所以它就是校园页的总访问量。计数从接入时开始累计，不代表接入前的访问量。
 
 部署到其他站点时，可以修改该文件的域名/路径条件，或从 `index.html` 移除它。请求失败或超时只会隐藏访问数，模型仍然运行。原理与服务用法见 <https://busuanzi.ibruce.info/>。
 
