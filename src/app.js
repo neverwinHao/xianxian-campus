@@ -100,6 +100,8 @@
   $('overview').addEventListener('click',overview);$('close-place').addEventListener('click',overview);
   $('top-view').addEventListener('click',()=>{stopWalking();stopTour();scene.top();updateModes('top');panel(false);});
   $('walk-view').addEventListener('click',startWalking);$('walk-exit').addEventListener('click',overview);$('walk-reset').addEventListener('click',()=>scene.resetWalking());
+  const uniformButtons=document.querySelectorAll('[data-uniform]');
+  uniformButtons.forEach(button=>button.addEventListener('click',()=>{scene.setUniform(button.dataset.uniform);uniformButtons.forEach(b=>b.setAttribute('aria-pressed',String(b===button)));toast('已换上'+button.title);}));
   $('north').addEventListener('click',()=>{stopTour();scene.north();});
   $('zoom-in').addEventListener('click',()=>{stopTour();scene.zoom(.8);});$('zoom-out').addEventListener('click',()=>{stopTour();scene.zoom(1.25);});
   $('toggle-labels').addEventListener('click',()=>{labelsOn=!labelsOn;setPressed('toggle-labels',labelsOn);});

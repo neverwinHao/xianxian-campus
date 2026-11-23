@@ -75,20 +75,25 @@
     return {valid,move,spawn,cameraFraction,obstacles};
   }
 
+  // Jacket colors run hem → middle → shoulders. Green follows the second uniform photo:
+  // green shoulders fading to yellow-green, wider white zip trim, light chest bands.
+  const UNIFORMS={
+    blue:{torso:[0xf0eee4,0x8dc8d4,0x148abd],sleeve:0x1988bd,forearm:0x1988bd,zip:1},
+    green:{torso:[0xb3c93a,0x72b43f,0x2f9a48],sleeve:0x2f9a48,forearm:0x96c03c,zip:2.4}
+  };
+
   function avatar(T){
     const group=new T.Group(),body=new T.Group();group.add(body);
     const material=color=>new T.MeshStandardMaterial({color:new T.Color(color).convertSRGBToLinear(),roughness:.85});
-    const blue=material(0x1988bd),navy=material(0x202e44),white=material(0xf1eee4),skin=material(0xe1ad8c),hair=material(0x222b32);
+    const sleeve=material(0x1988bd),forearm=material(0x1988bd),navy=material(0x202e44),white=material(0xf1eee4),skin=material(0xe1ad8c),hair=material(0x222b32);
     function mesh(geometry,mat,parent,x,y,z){const m=new T.Mesh(geometry,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
     function box(w,h,d,mat,parent,x,y,z){return mesh(new T.BoxGeometry(w,h,d),mat,parent,x,y,z);}
     function ball(r,mat,parent,x,y,z,sx=1,sy=1,sz=1){const m=mesh(new T.SphereGeometry(r,12,8),mat,parent,x,y,z);m.scale.set(sx,sy,sz);return m;}
-    const torso=new T.BoxGeometry(.86,1.13,.47,1,16,1),colors=[];
-    const low=new T.Color(0xf0eee4).convertSRGBToLinear(),mid=new T.Color(0x8dc8d4).convertSRGBToLinear(),high=new T.Color(0x148abd).convertSRGBToLinear(),position=torso.attributes.position;
-    for(let i=0;i<position.count;i++){const t=(position.getY(i)+.565)/1.13,c=t<.5?low.clone().lerp(mid,t*2):mid.clone().lerp(high,(t-.5)*2);colors.push(c.r,c.g,c.b);}
-    torso.setAttribute('color',new T.Float32BufferAttribute(colors,3));mesh(torso,new T.MeshStandardMaterial({vertexColors:true,roughness:.9}),body,0,1.66,0);
-    box(.028,1.12,.024,white,body,0,1.67,.253);box(.07,.10,.045,white,body,0,2.1,.27);
+    const torso=new T.BoxGeometry(.86,1.13,.47,1,16,1),position=torso.attributes.position;
+    torso.setAttribute('color',new T.Float32BufferAttribute(new Float32Array(position.count*3),3));mesh(torso,new T.MeshStandardMaterial({vertexColors:true,roughness:.9}),body,0,1.66,0);
+    const zip=box(.028,1.12,.024,white,body,0,1.67,.253);box(.07,.10,.045,white,body,0,2.1,.27);
     box(.34,.22,.35,white,body,0,2.25,0);box(.18,.22,.3,skin,body,0,2.39,0);
-    for(const side of [-1,1]){const collar=box(.3,.12,.38,blue,body,side*.22,2.21,.04);collar.rotation.z=side*-.28;}
+    for(const side of [-1,1]){const collar=box(.3,.12,.38,sleeve,body,side*.22,2.21,.04);collar.rotation.z=side*-.28;}
     const head=ball(.4,skin,body,0,2.76,0,1,1.09,.95);
     const cap=mesh(new T.SphereGeometry(.408,12,8,0,Math.PI*2,0,Math.PI*.53),hair,body,0,2.79,0);cap.scale.y=1.15;
     for(let i=0;i<3;i++){const fringe=box(.16,.14,.12,hair,body,-.2+i*.17,2.99,.3);fringe.rotation.z=-.18;}
@@ -105,9 +110,9 @@
     const arms=[],legs=[];
     for(const side of [-1,1]){
       const arm=new T.Group();arm.position.set(side*.56,2.1,0);body.add(arm);arms.push(arm);
-      ball(.17,blue,arm,0,.04,0,1,.75,1);
-      mesh(new T.CylinderGeometry(.17,.15,.77,8),blue,arm,0,-.32,0);
-      mesh(new T.CylinderGeometry(.15,.13,.27,8),blue,arm,0,-.8,.025);
+      ball(.17,sleeve,arm,0,.04,0,1,.75,1);
+      mesh(new T.CylinderGeometry(.17,.15,.77,8),sleeve,arm,0,-.32,0);
+      mesh(new T.CylinderGeometry(.15,.13,.27,8),forearm,arm,0,-.8,.025);
       mesh(new T.CylinderGeometry(.135,.13,.09,8),white,arm,0,-.95,.025);
       ball(.14,skin,arm,0,-1.09,.025,.8,1.1,.85);
       const leg=new T.Group();leg.position.set(side*.235,1.12,0);body.add(leg);legs.push(leg);
@@ -121,19 +126,33 @@
     ctx.textAlign='center';ctx.fillStyle='#ab3840';ctx.font='bold 65px "Kaiti SC","KaiTi",serif';ctx.fillText('献',64,78);ctx.fillStyle='#f5ecd7';ctx.font='bold 14px sans-serif';ctx.fillText('1948',64,117);
     const texture=new T.CanvasTexture(canvas);texture.encoding=T.sRGBEncoding;
     mesh(new T.PlaneGeometry(.23,.23),new T.MeshStandardMaterial({map:texture,transparent:true,roughness:.9}),body,.235,1.91,.245);
+    const trims={};
+    for(const name of Object.keys(UNIFORMS)){trims[name]=new T.Group();trims[name].name='trim-'+name;body.add(trims[name]);}
     for(const side of [-1,1])for(let i=0;i<4;i++){
-      const stripe=box(.13,.012,.01,white,body,side*(.10+i*.08),2.06-i*.025,.247);stripe.rotation.z=side*(.2+i*.09);
+      const stripe=box(.13,.012,.01,white,trims.blue,side*(.10+i*.08),2.06-i*.025,.247);stripe.rotation.z=side*(.2+i*.09);
     }
+    // Green bands stay just behind the badge plane; the blue band sits on the wearer's right chest.
+    const band=material(0xdcebc8);
+    for(const side of [-1,1])for(let i=0;i<4;i++)box(.34,.016,.008,band,trims.green,side*.225,2.05-i*.03,.239);
+    box(.34,.035,.008,material(0x2c55a5),trims.green,-.225,2.1,.239);
+    let uniform;
+    function setUniform(name){
+      uniform=UNIFORMS[name]?name:'blue';const u=UNIFORMS[uniform],[low,mid,high]=u.torso.map(c=>new T.Color(c).convertSRGBToLinear()),colors=torso.attributes.color;
+      for(let i=0;i<position.count;i++){const t=(position.getY(i)+.565)/1.13,c=t<.5?low.clone().lerp(mid,t*2):mid.clone().lerp(high,(t-.5)*2);colors.setXYZ(i,c.r,c.g,c.b);}
+      colors.needsUpdate=true;sleeve.color.set(u.sleeve).convertSRGBToLinear();forearm.color.set(u.forearm).convertSRGBToLinear();zip.scale.x=u.zip;
+      for(const [name,trim] of Object.entries(trims))trim.visible=name===uniform;
+    }
+    setUniform('blue');
     const shadow=mesh(new T.CircleGeometry(.62,24),new T.MeshBasicMaterial({color:0x324234,transparent:true,opacity:.14,depthWrite:false}),group,0,.03,0);shadow.rotation.x=-Math.PI/2;
-    return {group,animate(phase,moving,reduced){
+    return {group,setUniform,get uniform(){return uniform;},animate(phase,moving,reduced){
       const swing=moving&&!reduced?Math.sin(phase):0;
       legs.forEach((leg,i)=>leg.rotation.x=swing*(i?1:-1)*.55);arms.forEach((arm,i)=>arm.rotation.x=swing*(i?-1:1)*.42);
       body.position.y=moving&&!reduced?Math.abs(Math.sin(phase))*.045:0;head.rotation.z=swing*.015;
     }};
   }
 
-  function create({T,campus,parent,camera,controls,canvas}){
-    const nav=navigation(campus),student=avatar(T);parent.add(student.group);student.group.visible=false;
+  function create({T,campus,parent,camera,controls,canvas,uniform='blue'}){
+    const nav=navigation(campus),student=avatar(T);student.setUniform(uniform);parent.add(student.group);student.group.visible=false;
     const pad=document.getElementById('walk-joystick'),knob=document.getElementById('walk-knob'),fastButton=document.getElementById('walk-fast');
     const keys=new Set(),lookPointers=new Map(),listeners=[],joy={x:0,z:0};
     let active=false,paused=false,fast=false,padPointer=null,pos=nav.spawn(),yaw=0,pitch=.48,distance=14,phase=0,moving=false,pulse=null;
@@ -182,7 +201,7 @@
     function stop(){active=false;paused=false;clearInput();fast=false;fastButton.setAttribute('aria-pressed','false');student.group.visible=false;controls.enabled=true;camera.near=1;}
     return {
       get active(){return active;},start(){active=true;paused=false;controls.enabled=false;camera.near=.15;student.group.visible=true;reset();},stop,reset,
-      pause(value){paused=value;if(value)clearInput();},clearInput,
+      pause(value){paused=value;if(value)clearInput();},clearInput,setUniform:student.setUniform,
       tick(seconds){
         if(!active)return;const dt=Math.max(0,Math.min(seconds,.1));
         let x=joy.x+Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
@@ -195,9 +214,9 @@
         if(moving){const angle=Math.atan2(dx,dz),delta=Math.atan2(Math.sin(angle-student.group.rotation.y),Math.cos(angle-student.group.rotation.y));student.group.rotation.y+=delta*Math.min(1,dt*13);phase+=Math.hypot(dx,dz)*2.8;}
         pos=next;student.group.position.set(pos.x,.23,pos.z);student.animate(phase,moving,reduced);placeCamera(false,dt);
       },
-      state(){return {active,paused,x:+pos.x.toFixed(3),z:+pos.z.toFixed(3),moving,fast,heading:+student.group.rotation.y.toFixed(3)};},
+      state(){return {active,paused,x:+pos.x.toFixed(3),z:+pos.z.toFixed(3),moving,fast,heading:+student.group.rotation.y.toFixed(3),uniform:student.uniform};},
       dispose(){stop();listeners.forEach(remove=>remove());}
     };
   }
-  window.CampusWalking={navigation,create};
+  window.CampusWalking={navigation,avatar,create};
 })();

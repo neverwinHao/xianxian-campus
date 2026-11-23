@@ -25,7 +25,8 @@ Three.js → OrbitControls → campuses.js → walk.js → scene.js → app.js �
 | `overview()`、`top()`、`north()`  | 鸟瞰、俯视、恢复北向                           |
 | `project(place)`                  | 把建筑坐标投影到页面标注坐标                   |
 | `startWalking()`、`stopWalking()` | 进入或结束徒步                                 |
-| `walkState()`                     | 返回角色位置、速度状态与方向                   |
+| `walkState()`                     | 返回角色位置、速度状态、方向与当前校服         |
+| `setUniform(name)`                | 换校服（`blue` / `green`），切换校区后保持     |
 | `capture()`                       | 返回当前 WebGL 画布                            |
 | `onFrame`                         | 每个渲染帧后的回调，供页面标注或视频合成使用   |
 | `dispose()`                       | 释放渲染器、模型、监听器与控制器               |

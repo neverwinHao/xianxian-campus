@@ -27,7 +27,7 @@
     const fill = new T.DirectionalLight(0xe6f3ff,.15); fill.position.set(180,100,-180); scene.add(fill);
     const floor = new T.Mesh(new T.PlaneGeometry(4000,4000),new T.MeshStandardMaterial({color:new T.Color(0xe4e8dc).convertSRGBToLinear(),roughness:1}));
     floor.rotation.x = -Math.PI/2; floor.position.y=-1.5;floor.receiveShadow=true;scene.add(floor);
-    let root, campus, places=[], picking=[], batches, materials, animation=null, running=true, requestId, lastFrame=0, photoLens=false, walker=null;
+    let root, campus, places=[], picking=[], batches, materials, animation=null, running=true, requestId, lastFrame=0, photoLens=false, walker=null, uniform='blue';
     const boxGeometry = new T.BoxGeometry(1,1,1), sphereGeometry = new T.IcosahedronGeometry(1,1), trunkGeometry = new T.CylinderGeometry(.7,1,1,6);
     const roofGeometry = new T.BufferGeometry();
     roofGeometry.setAttribute('position',new T.Float32BufferAttribute([
@@ -968,7 +968,7 @@
       }
       // Small street furniture enriches scale without claiming real fixture locations.
       for(const [x,z] of data.gardens){box(x+7,1,z,5,.35,1.4,mat('bench',0x92765c));box(x+5,.5,z,.3,1,.8,mat('fence',0x9aa28d));box(x+9,.5,z,.3,1,.8,mat('fence',0x9aa28d));}
-      finishBatches();walker=window.CampusWalking.create({T,campus,parent:root,camera,controls,canvas:renderer.domElement});root.updateMatrixWorld(true);
+      finishBatches();walker=window.CampusWalking.create({T,campus,parent:root,camera,controls,canvas:renderer.domElement,uniform});root.updateMatrixWorld(true);
       const allPlaces=[...data.places,...data.buildings,...data.fields,...data.courts];
       places=data.displayIds.map(id=>allPlaces.find(p=>p.id===id)).filter(Boolean);
       for(const proxy of picking){
@@ -1101,7 +1101,7 @@
     renderer.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();document.getElementById('error').hidden=false;document.getElementById('error-detail').textContent='图形上下文已中断，重新加载页面即可重建。';});
     return {load,choose,overview,top,north,zoom,lighting,project,resize,
       get walking(){return Boolean(walker?.active);},walkState(){return walker?.state();},
-      startWalking(){animation=null;photoLens=false;walker.start();configureLens();},stopWalking(){walker?.stop();configureLens();},resetWalking(){walker?.reset();},pauseWalking(value){walker?.pause(value);},
+      startWalking(){animation=null;photoLens=false;walker.start();configureLens();},stopWalking(){walker?.stop();configureLens();},resetWalking(){walker?.reset();},pauseWalking(value){walker?.pause(value);},setUniform(name){uniform=name;walker?.setUniform(name);},
       get camera(){return camera;},get controls(){return controls;},get renderer(){return renderer;},get places(){return places;},set onFrame(fn){onFrame=fn;},cancel(){animation=null;},capture(){renderer.render(scene,camera);return renderer.domElement;},dispose(){running=false;cancelAnimationFrame(requestId);observer.disconnect();walker?.dispose();disposeRoot();sharedGeometry.forEach(g=>g.dispose());controls.dispose();floor.geometry.dispose();floor.material.dispose();renderer.dispose();}};
   };
 })();

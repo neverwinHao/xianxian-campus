@@ -35,7 +35,7 @@
     <div class="bottom-left"><div class="place-card" id="place-card"><h3 id="place-name">北校区</h3><button id="close-place" aria-label="返回校区全景" hidden>×</button></div><div class="place-actions"><button id="building-closeup" hidden>近景 ↗</button></div></div>
     <div class="view-switch" role="group" aria-label="视角模式"><button id="overview" aria-pressed="true">◈ <span>校园鸟瞰</span></button><button id="top-view" aria-pressed="false">⊞ <span>平面俯瞰</span></button><button id="tour-view" aria-pressed="false">▷ <span>自动漫游</span></button><button id="walk-view" aria-pressed="false">♙ <span>徒步逛校园</span></button></div>
     <section id="walk-ui" aria-label="校服小人步行控制" hidden>
-      <div class="walk-bar"><div><strong id="walk-nearby">校门</strong></div><button id="walk-reset">回到校门</button><button id="walk-exit">退出步行 ×</button></div>
+      <div class="walk-bar"><div><strong id="walk-nearby">校门</strong></div><div class="walk-uniform" role="group" aria-label="换校服"><button data-uniform="blue" aria-pressed="true" aria-label="蓝色校服" title="蓝色校服"></button><button data-uniform="green" aria-pressed="false" aria-label="绿色校服" title="绿色校服"></button></div><button id="walk-reset">回到校门</button><button id="walk-exit">退出步行 ×</button></div>
       <div id="walk-joystick" role="group" aria-label="移动摇杆"><span class="joystick-ring"></span><button data-walk-direction="forward" aria-label="向前走">▲</button><button data-walk-direction="left" aria-label="向左走">◀</button><button data-walk-direction="right" aria-label="向右走">▶</button><button data-walk-direction="back" aria-label="向后走">▼</button><span id="walk-knob"></span></div>
       <button id="walk-fast" aria-pressed="false">快走 <span>⇧</span></button>
     </section>

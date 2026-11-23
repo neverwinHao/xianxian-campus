@@ -78,6 +78,38 @@ test("north connecting buildings and front sculpture cannot be crossed", () => {
   for (const p of [...CAMPUSES.north.connectors, CAMPUSES.north.sculpture])
     assert.equal(nav.valid(p.x, p.z), false);
 });
+test("uniform switch recolors the jacket and swaps the chest trim", () => {
+  const ctx = new Proxy({}, { get: () => () => {} }),
+    page = {
+      window: {},
+      document: { createElement: () => ({ getContext: () => ctx }) },
+    };
+  for (const file of ["../vendor/three/three.min.js", "../src/walk.js"])
+    vm.runInNewContext(
+      fs.readFileSync(path.join(__dirname, file), "utf8"),
+      page,
+    );
+  const student = page.window.CampusWalking.avatar(page.THREE);
+  let torso;
+  student.group.traverse((o) => {
+    if (o.material?.vertexColors) torso = o.geometry;
+  });
+  const ys = torso.attributes.position.array.filter((_, i) => i % 3 === 1),
+    top = ys.indexOf(Math.max(...ys)),
+    shoulder = () => {
+      const c = torso.attributes.color;
+      return { r: c.getX(top), g: c.getY(top), b: c.getZ(top) };
+    },
+    trim = (name) => student.group.getObjectByName("trim-" + name).visible;
+  assert.equal(student.uniform, "blue");
+  assert.ok(shoulder().b > shoulder().g && trim("blue") && !trim("green"));
+  student.setUniform("green");
+  assert.equal(student.uniform, "green");
+  assert.ok(shoulder().g > shoulder().b && shoulder().g > shoulder().r);
+  assert.ok(trim("green") && !trim("blue"));
+  student.setUniform("unknown");
+  assert.equal(student.uniform, "blue");
+});
 test("camera retracts before walls and preserves clear views above them", () => {
   const nav = CampusWalking.navigation({
     ...open,
